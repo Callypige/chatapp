@@ -7,9 +7,13 @@
   <h1 class="text-3xl lg:text-6xl text-white">{{room.name}}</h1>
 </div>
 
+<div class="lg:w-2/4 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
+    <div class="chat-messages space-y-3" id="chat-log">
+    </div>
+</div>
+
 
 <div class="lg:w-2/4 mt-6 mx-4 lg:mx-auto p-4 bg-white rounded-xl">
-    <textarea id="chat-log" cols="90" rows="20"></textarea>
     <form method="post" action="." class="flex" onsubmit="return false;">
         {% csrf_token %}
         <input type="text" name="content" class="flex-1 mr-3" placeholder="Your message..." id="chat-message-input">
@@ -40,7 +44,16 @@
 
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (userName + ' : ' + data.message + '\n');
+
+            if (data.message) {
+                let html = '<div class="p-4 bg-gray-200 rounded-xl">';
+                    html += '<p class="font-semibold">' + data.username + '</p>';
+                    html += '<p>' + data.message + '</p></div>'
+                document.querySelector('#chat-log').innerHTML = html;
+            } else {
+                alert('The message was empty');
+            }
+
         };
 
         chatSocket.onclose = function(e) {
@@ -59,6 +72,8 @@
             const message = messageInputDom.value;
             chatSocket.send(JSON.stringify({
                 'message': message,
+                'username': userName,
+                'room': roomName
             }));
             messageInputDom.value = '';
         };
