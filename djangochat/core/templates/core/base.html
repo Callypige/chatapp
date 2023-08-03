@@ -21,6 +21,7 @@
       </div>
       <div class="flex items-center space-x-4">
         {% if request.user.is_authenticated %}
+          <h3 class="text-white hover:text-gray-200">Hello, {{request.user.username}}</h3>
           <a href="/rooms" class="text-white hover:text-gray-200">Rooms</a>
           <a
             href="/logout/"
